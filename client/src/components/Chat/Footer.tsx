@@ -37,10 +37,11 @@ export default function Footer({ className }: { className?: string }) {
   const mainContentParts = (
     typeof config?.customFooter === 'string'
       ? config.customFooter
-      : '[LibreChat ' +
-        Constants.VERSION +
-        '](https://librechat.ai) - ' +
-        localize('com_ui_latest_footer')
+      : ''
+      // : '[LibreChat ' +
+      //   Constants.VERSION +
+      //   '](https://librechat.ai) - ' +
+      //   localize('com_ui_latest_footer')
   ).split('|');
 
   useEffect(() => {
@@ -79,7 +80,10 @@ export default function Footer({ className }: { className?: string }) {
     </React.Fragment>
   ));
 
-  const footerElements = [...mainContentRender, privacyPolicyRender, termsOfServiceRender].filter(
+  // const footerElements = [...mainContentRender, privacyPolicyRender, termsOfServiceRender].filter(
+  //   Boolean,
+  // );
+  const footerElements = [...mainContentRender, privacyPolicyRender].filter(
     Boolean,
   );
 
