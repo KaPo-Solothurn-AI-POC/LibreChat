@@ -100,6 +100,7 @@ services:
       - RAG_UPLOAD_DIR=/uploads
     volumes:
       - ../rag_api/uploads:/app/uploads
+      - ../rag_api:/app
     ports:
       - "8000:8000"
     # depends_on:
