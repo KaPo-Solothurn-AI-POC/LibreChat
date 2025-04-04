@@ -27,6 +27,7 @@ const {
   CUT_OFF_PROMPT,
   titleInstruction,
   createContextHandlers,
+  createDocumentSearch
 } = require('./prompts');
 const { encodeAndFormat } = require('~/server/services/Files/images/encode');
 const { addSpaceIfNeeded, isEnabled, sleep } = require('~/server/utils');
@@ -429,12 +430,18 @@ class OpenAIClient extends BaseClient {
       this.options.attachments = files;
     }
 
-    if (this.message_file_map) {
-      this.contextHandlers = createContextHandlers(
-        this.options.req,
-        orderedMessages[orderedMessages.length - 1].text,
-      );
-    }
+    if (this.options.attachments) {
+      if (this.message_file_map) {
+        this.contextHandlers = createContextHandlers(
+          this.options.req,
+          orderedMessages[orderedMessages.length - 1].text,
+        )
+      }} else {
+        this.documentSearch = createDocumentSearch(
+          this.options.req,
+          orderedMessages[orderedMessages.length - 1].text,
+        )
+      }
 
     const formattedMessages = orderedMessages.map((message, i) => {
       const formattedMessage = formatMessage({
@@ -451,6 +458,7 @@ class OpenAIClient extends BaseClient {
       }
 
       /* If message has files, calculate image token cost */
+      // Tokens still need to be calculated when using document search!
       if (this.message_file_map && this.message_file_map[message.messageId]) {
         const attachments = this.message_file_map[message.messageId];
         for (const file of attachments) {
@@ -473,6 +481,9 @@ class OpenAIClient extends BaseClient {
     if (this.contextHandlers) {
       this.augmentedPrompt = await this.contextHandlers.createContext();
       promptPrefix = this.augmentedPrompt + promptPrefix;
+    } else if (this.documentSearch) {
+      this.augmentedPrompt = await this.documentSearch.createDocContext();
+      promptPrefix = this.augmentedPrompt + promptPrefix
     }
 
     if (promptPrefix && this.isOmni !== true) {

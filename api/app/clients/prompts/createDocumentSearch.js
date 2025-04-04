@@ -54,7 +54,7 @@ function createDocumentSearch(req, userMessageContent) {
     }
   };
 
-  const createContext = async () => {
+  const createDocContext = async () => {
     try {
       if (!queryPromises.length || !processedEmbeddings.length) {
         return '';
@@ -146,7 +146,7 @@ function createDocumentSearch(req, userMessageContent) {
 
   return {
     processEmbedding,
-    createContext,
+    createDocContext,
   };
 }
 
