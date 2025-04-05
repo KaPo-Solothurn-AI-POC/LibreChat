@@ -42,7 +42,7 @@ function createDocumentSearch(req, userMessageContent) {
 
   // We no longer need to process files, so this is simplified, but does it still need it???
   const processEmbedding = async (embedding) => {
-    if (embeddings.embedded && !processedIds.has(embedding.file_id)) {
+    if (embedding.embedded && !processedIds.has(embedding.file_id)) {
       try {
         const promise = query(embedding);  // Get embeddings for the query
         queryPromises.push(promise);
