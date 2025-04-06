@@ -11,7 +11,7 @@ const {
   mapModelToAzureConfig,
 } = require('librechat-data-provider');
 const { extractBaseURL, constructAzureURL, genAzureChatCompletion } = require('~/utils');
-const { createContextHandlers } = require('./prompts');
+const { createContextHandlers, createDocumentSearch } = require('./prompts');
 const { createCoherePayload } = require('./llm');
 const BaseClient = require('./BaseClient');
 const { logger } = require('~/config');
@@ -642,6 +642,14 @@ ${botMessage.message}
       );
     }
 
+    if (!this.contextHandlers) {
+      this.documentSearch = createDocumentSearch(
+        this.options.req,
+        orderedMessages[orderedMessages.length - 1].text,
+      );
+      logger.debug('[ChatGPTClient] documentsearch triggered')
+    }
+
     // Calculate image token cost and process embedded files
     messages.forEach((message, i) => {
       if (this.message_file_map && this.message_file_map[message.messageId]) {
@@ -666,6 +674,11 @@ ${botMessage.message}
     if (this.contextHandlers) {
       this.augmentedPrompt = await this.contextHandlers.createContext();
       promptPrefix = this.augmentedPrompt + promptPrefix;
+    }else {
+      this.augmentedPrompt = await this.documentSearch.createDocContext();
+      promptPrefix = this.augmentedPrompt + promptPrefix
+      logger.debug('[ChatGPTClient] Prompt augmented with Document search')
+      logger.info(promptPrefix)
     }
 
     if (promptPrefix) {

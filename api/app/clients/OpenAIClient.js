@@ -486,14 +486,21 @@ class OpenAIClient extends BaseClient {
       this.augmentedPrompt = await this.contextHandlers.createContext();
       promptPrefix = this.augmentedPrompt + promptPrefix;
       logger.debug('[contextHandler] augmented Prefix made')
-    } else {
-      this.augmentedPrompt = await this.documentSearch.createDocContext();
-      promptPrefix = this.augmentedPrompt + promptPrefix
-      logger.debug('[OpenAIClient] Prompt augmented with Document search')
-      logger.info(promptPrefix)
     }
+    // } else {
+    //   this.augmentedPrompt = await this.documentSearch.createDocContext();
+    //   promptPrefix = this.augmentedPrompt + promptPrefix
+    //   logger.debug('[OpenAIClient] Prompt augmented with Document search')
+    //   logger.info(promptPrefix)
+    // }
+    logger.debug(this.documentSearch)
+    this.augmentedPrompt = await this.documentSearch.createDocContext();
+    logger.debug(this.augmentedPrompt)
+    promptPrefix = this.augmentedPrompt + promptPrefix
+    logger.debug('[OpenAIClient] Prompt augmented with Document search')
+    logger.debug(promptPrefix);
 
-    if (promptPrefix && this.isOmni !== true) {
+    if (promptPrefix) {
       promptPrefix = `Instructions:\n${promptPrefix.trim()}`;
       instructions = {
         role: 'system',
@@ -523,6 +530,7 @@ class OpenAIClient extends BaseClient {
     /** EXPERIMENTAL */
     if (promptPrefix && this.isOmni === true) {
       const lastUserMessageIndex = payload.findLastIndex((message) => message.role === 'user');
+      logger.info('[OpenAIClient] Experimental method used') //can confirm it is not used.
       if (lastUserMessageIndex !== -1) {
         payload[
           lastUserMessageIndex
@@ -1127,6 +1135,7 @@ ${convo}
       }
       if (this.isChatCompletion) {
         modelOptions.messages = payload;
+        logger.debug('[OpenAIClient', payload);
       } else {
         modelOptions.prompt = payload;
       }

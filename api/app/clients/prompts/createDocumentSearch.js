@@ -55,94 +55,129 @@ function createDocumentSearch(req, userMessageContent) {
   };
 
   const createDocContext = async () => {
+    // try {
+    //   if (!queryPromises.length || !processedEmbeddings.length) {
+    //     return '';
+    //   }
     try {
-      if (!queryPromises.length || !processedEmbeddings.length) {
-        return '';
+        const response = await query(); //query rag api
+        const results = response.data;
+
+        if (!results?.length || !Array.isArray(results)) {
+          return 'The semantic search did not return any results.';
       }
+      const context = results
+      .map((result) => {
+        const pageContent = result[0]?.page_content?.trim() ?? '';
+        const fileName = result[0]?.metadata?.filename ?? 'unknown';
+        return `
+  <embedding>
+  <filename>${fileName}</filename>
+  <context>
+    <![CDATA[${pageContent}]]>
+  </context>
+  </embedding>`;
+      })
+      .join('\n');
 
-      const oneEmbedding = processedEmbeddings.length === 1;
-      const header = `The user has provided ${oneEmbedding ? 'one' : processedEmbeddings.length} embedding${
-        !oneEmbedding ? 's' : ''
-      } for the conversation:`;
+    const prompt = `The following context was retrieved by semantic search:
 
-      // Constructing the context based on embeddings and filenames
-      const embeddings = `${
-        oneEmbedding
-          ? ''
-          : `\n<embeddings>`
-      }${processedEmbeddings
-        .map(
-          (embedding) => `
-            <embedding>
-              <filename>${embedding.filename}</filename>
-              <type>${embedding.type}</type> 
-            </embedding>`
-        )
-        .join('')}${
-        oneEmbedding
-          ? ''
-          : `\n</embeddings>`
-      }`;
+  <context>
+  ${context}
+  </context>
 
-      // Resolve all queries (this now gets embeddings)
-      const resolvedQueries = await Promise.all(queryPromises);
+  ${footer}`;
 
-      const context =
-        resolvedQueries.length === 0
-          ? '\n\tThe semantic search did not return any results.'
-          : resolvedQueries
-            .map((queryResult, index) => {
-              const embedding = processedEmbeddings[index];
-              let contextItems = queryResult.data;
+    return prompt;
+  } catch (error) {
+    logger.error('Error creating context:', error);
+    return '';
+  }
+};
 
-              const generateContext = (currentContext) =>
-                `
-            <embedding>
-              <filename>${embedding.filename}</filename>
-              <context>${currentContext}</context>
-            </embedding>`;
+  //     const oneEmbedding = processedEmbeddings.length === 1;
+  //     const header = `The user has provided ${oneEmbedding ? 'one' : processedEmbeddings.length} embedding${
+  //       !oneEmbedding ? 's' : ''
+  //     } for the conversation:`;
 
-              // if (useFullContext) {
-              //   return generateContext(`\n${contextItems}`);
-              // }
+  //     // Constructing the context based on embeddings and filenames
+  //     const embeddings = `${
+  //       oneEmbedding
+  //         ? ''
+  //         : `\n<embeddings>`
+  //     }${processedEmbeddings
+  //       .map(
+  //         (embedding) => `
+  //           <embedding>
+  //             <filename>${embedding.filename}</filename>
+  //             <type>${embedding.type}</type> 
+  //           </embedding>`
+  //       )
+  //       .join('')}${
+  //       oneEmbedding
+  //         ? ''
+  //         : `\n</embeddings>`
+  //     }`;
 
-              contextItems = queryResult.data
-                .map((item) => {
-                  const pageContent = item[0].page_content;
-                  return `
-              <contextItem>
-                <![CDATA[${pageContent?.trim()}]]>
-              </contextItem>`;
-                })
-                .join('');
+  //     // Resolve all queries (this now gets embeddings)
+  //     const resolvedQueries = await Promise.all(queryPromises);
 
-              return generateContext(contextItems);
-            })
-            .join('');
+  //     const context =
+  //       resolvedQueries.length === 0
+  //         ? '\n\tThe semantic search did not return any results.'
+  //         : resolvedQueries
+  //           .map((queryResult, index) => {
+  //             const embedding = processedEmbeddings[index];
+  //             let contextItems = queryResult.data;
 
-      // if (useFullContext) {
-      //   const prompt = `${header}
-      //     ${context}
-      //     ${footer}`;
+  //             const generateContext = (currentContext) =>
+  //               `
+  //           <embedding>
+  //             <filename>${embedding.filename}</filename>
+  //             <context>${currentContext}</context>
+  //           </embedding>`;
 
-      //   return prompt;
-      // }
+  //             // if (useFullContext) {
+  //             //   return generateContext(`\n${contextItems}`);
+  //             // }
 
-      const prompt = `${header}
-        ${embeddings}
+  //             contextItems = queryResult.data
+  //               .map((item) => {
+  //                 const pageContent = item[0].page_content;
+  //                 return `
+  //             <contextItem>
+  //               <![CDATA[${pageContent?.trim()}]]>
+  //             </contextItem>`;
+  //               })
+  //               .join('');
 
-        A semantic search was executed with the user's message as the query, retrieving the following context inside <context></context> XML tags.
+  //             return generateContext(contextItems);
+  //           })
+  //           .join('');
 
-        <context>${context}</context>
+  //     // if (useFullContext) {
+  //     //   const prompt = `${header}
+  //     //     ${context}
+  //     //     ${footer}`;
 
-        ${footer}`;
+  //     //   return prompt;
+  //     // }
 
-      return prompt;
-    } catch (error) {
-      logger.error('Error creating context:', error);
-      throw error;
-    }
-  };
+  //     const prompt = `${header}
+  //       ${embeddings}
+
+  //       A semantic search was executed with the user's message as the query, retrieving the following context inside <context></context> XML tags.
+
+  //       <context>${context}</context>
+
+  //       ${footer}`;
+
+  //     return prompt;
+  //   } catch (error) {
+  //     logger.error('Error creating context:', error);
+  //     throw error;
+  //   }
+  // };
 
   return {
     processEmbedding,
