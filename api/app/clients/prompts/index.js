@@ -7,7 +7,7 @@ const titlePrompts = require('./titlePrompts');
 const truncate = require('./truncate');
 const createVisionPrompt = require('./createVisionPrompt');
 const createContextHandlers = require('./createContextHandlers');
-const createDocumentSearch = require('.createDocumentSearch');
+const createDocumentSearch = require('./createDocumentSearch');
 
 module.exports = {
   addCacheControl,

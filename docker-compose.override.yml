@@ -36,6 +36,7 @@ services:
     - ./images:/app/client/public/images
     - ./logs:/app/api/logs
     - ./src:/app/src  # Only mount the source code, NOT the entire `/app`
+    - ./app/clients:/app/clients #get app clients code in for development
     - /app/node_modules  # Keep dependencies inside the container
 
     # volumes:
