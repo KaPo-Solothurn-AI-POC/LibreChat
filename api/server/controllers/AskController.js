@@ -110,10 +110,13 @@ const AskController = async (req, res, next, initializeClient, addTitle) => {
       conversation && !conversation.title ? null : conversation?.title || 'New Chat';
 
     if (client.options.attachments) {
-      userMessage.files = client.options.attachments;
+      userMessage.files = client.options.attachments; // if attachment userMessage.files gotten from client.options.attachements
       conversation.model = endpointOption.modelOptions.model;
       delete userMessage.image_urls;
     }
+
+    //TODO: Instead of running if client.options.attachements, we need to get the files or embeddings from the rag_api
+    //question is with userMessage.files = client.options.attachments we define where the attachments are, but are these already the embeddings?
 
     if (!abortController.signal.aborted) {
       sendMessage(res, {

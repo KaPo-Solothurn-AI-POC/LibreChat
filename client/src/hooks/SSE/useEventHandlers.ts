@@ -89,7 +89,7 @@ export default function useEventHandlers({
   const attachmentHandler = useAttachmentHandler();
 
   const messageHandler = useCallback(
-    (data: string | undefined, submission: EventSubmission) => {
+    async (data: string | undefined, submission: EventSubmission) => {
       const {
         messages,
         userMessage,
@@ -106,6 +106,40 @@ export default function useEventHandlers({
         announcePolite({ message: 'composing', isStatus: true });
         lastAnnouncementTimeRef.current = currentTime;
       }
+
+      // Function to fetch relevant documents from your RAG API
+      const fetchRagDocuments = async (query: string) => {
+        try {
+          const response = await fetch(`${process.env.RAG_API_URL}/query`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query }),
+          });
+          if (!response.ok) {
+            throw new Error('Failed to fetch RAG documents');
+          }
+          const data = await response.json();
+          return data.documents || [];
+        } catch (error) {
+          console.error('Error fetching RAG documents:', error);
+          return [];
+        }
+      };
+
+      // Function to add retrieved documents to the message
+      const addDocumentsToMessage = (message: TMessage, documents: string[]) => {
+        if (documents.length > 0) {
+          message.content += `\n\n[Context from RAG API]:\n${documents.join('\n')}`;
+        }
+      };
+      // Fetch documents from RAG API based on the user message
+      const documents = await fetchRagDocuments(userMessage.content);
+
+      // Add the retrieved documents to the user message
+      addDocumentsToMessage(userMessage, documents);
 
       if (isRegenerate) {
         setMessages([

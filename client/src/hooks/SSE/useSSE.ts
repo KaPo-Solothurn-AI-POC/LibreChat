@@ -108,7 +108,7 @@ export default function useSSE(
       }
     });
 
-    sse.addEventListener('message', (e: MessageEvent) => {
+    sse.addEventListener('message', async (e: MessageEvent) => {
       const data = JSON.parse(e.data);
 
       if (data.final != null) {

@@ -27,6 +27,7 @@ const {
   CUT_OFF_PROMPT,
   titleInstruction,
   createContextHandlers,
+  createDocumentSearch,
 } = require('./prompts');
 const { encodeAndFormat } = require('~/server/services/Files/images/encode');
 const { addSpaceIfNeeded, isEnabled, sleep } = require('~/server/utils');
@@ -429,12 +430,21 @@ class OpenAIClient extends BaseClient {
       this.options.attachments = files;
     }
 
-    if (this.message_file_map) {
-      this.contextHandlers = createContextHandlers(
-        this.options.req,
-        orderedMessages[orderedMessages.length - 1].text,
-      );
-    }
+    if (this.options.attachments && this.message_file_map) {
+      
+        this.contextHandlers = createContextHandlers(
+          this.options.req,
+          orderedMessages[orderedMessages.length - 1].text,
+        );
+      } 
+    if (!this.contextHandlers) {
+        this.documentSearch = createDocumentSearch(
+          this.options.req,
+          orderedMessages[orderedMessages.length - 1].text,
+        );
+        logger.debug('[OpenAIClient] documentsearch triggered')
+      }
+    
 
     const formattedMessages = orderedMessages.map((message, i) => {
       const formattedMessage = formatMessage({
@@ -451,6 +461,8 @@ class OpenAIClient extends BaseClient {
       }
 
       /* If message has files, calculate image token cost */
+      // Tokens still need to be calculated when using document search!
+      //how would we apply the logic here for document search?
       if (this.message_file_map && this.message_file_map[message.messageId]) {
         const attachments = this.message_file_map[message.messageId];
         for (const file of attachments) {
@@ -473,9 +485,22 @@ class OpenAIClient extends BaseClient {
     if (this.contextHandlers) {
       this.augmentedPrompt = await this.contextHandlers.createContext();
       promptPrefix = this.augmentedPrompt + promptPrefix;
+      logger.debug('[contextHandler] augmented Prefix made')
     }
+    // } else {
+    //   this.augmentedPrompt = await this.documentSearch.createDocContext();
+    //   promptPrefix = this.augmentedPrompt + promptPrefix
+    //   logger.debug('[OpenAIClient] Prompt augmented with Document search')
+    //   logger.info(promptPrefix)
+    // }
+    logger.debug(this.documentSearch)
+    this.augmentedPrompt = await this.documentSearch.createDocContext();
+    logger.debug(this.augmentedPrompt)
+    promptPrefix = this.augmentedPrompt + promptPrefix
+    logger.debug('[OpenAIClient] Prompt augmented with Document search')
+    logger.debug(promptPrefix);
 
-    if (promptPrefix && this.isOmni !== true) {
+    if (promptPrefix) {
       promptPrefix = `Instructions:\n${promptPrefix.trim()}`;
       instructions = {
         role: 'system',
@@ -505,6 +530,7 @@ class OpenAIClient extends BaseClient {
     /** EXPERIMENTAL */
     if (promptPrefix && this.isOmni === true) {
       const lastUserMessageIndex = payload.findLastIndex((message) => message.role === 'user');
+      logger.info('[OpenAIClient] Experimental method used') //can confirm it is not used.
       if (lastUserMessageIndex !== -1) {
         payload[
           lastUserMessageIndex
@@ -1109,6 +1135,7 @@ ${convo}
       }
       if (this.isChatCompletion) {
         modelOptions.messages = payload;
+        logger.debug('[OpenAIClient', payload);
       } else {
         modelOptions.prompt = payload;
       }
