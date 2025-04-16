@@ -493,16 +493,19 @@ class OpenAIClient extends BaseClient {
     //   logger.debug('[OpenAIClient] Prompt augmented with Document search')
     //   logger.info(promptPrefix)
     // }
-    logger.debug(this.documentSearch)
-    const { prompt, sources } = await this.documentSearch.createDocContext();
-    //this.augmentedPrompt = await this.documentSearch.createDocContext();
-    this.augmentedPrompt = prompt;
-    this.sourceMetadata = sources ?? [];
-    logger.debug('Augmented Prompt:', this.augmentedPrompt)
-    logger.debug('Source Meta Data:', this.sourceMetadata)
-    promptPrefix = this.augmentedPrompt + promptPrefix
-    logger.debug('[OpenAIClient] Prompt augmented with Document search')
-    logger.debug(promptPrefix);
+    
+    if (this.documentSearch) {
+      logger.debug("[documentSearch] triggered", this.documentSearch);
+      const { prompt, sources } = await this.documentSearch.createDocContext();
+      //this.augmentedPrompt = await this.documentSearch.createDocContext();
+      this.augmentedPrompt = prompt;
+      this.sourceMetadata = sources ?? [];
+      logger.debug('Augmented Prompt:', this.augmentedPrompt)
+      logger.debug('Source Meta Data:', this.sourceMetadata)
+      promptPrefix = this.augmentedPrompt + promptPrefix
+      logger.debug('[OpenAIClient] Prompt augmented with Document search')
+      logger.debug(promptPrefix);
+    }
 
     if (promptPrefix) {
       promptPrefix = `Instructions:\n${promptPrefix.trim()}`;
