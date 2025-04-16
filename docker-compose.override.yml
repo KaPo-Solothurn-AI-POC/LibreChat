@@ -98,7 +98,7 @@ services:
       # - POSTGRES_PASSWORD=mypassword
       #- RAG_PORT=${RAG_PORT:-8000}
       - RAG_API_URL=http://rag_api:${RAG_PORT:-8000}
-      - RAG_UPLOAD_DIR=/uploads
+      - RAG_UPLOAD_DIR=/app/uploads
     volumes:
       - ../rag_api/uploads:/app/uploads
       - ../rag_api:/app

@@ -104,6 +104,19 @@ const DisplayMessage = ({ text, isCreatedByUser, message, showCursor }: TDisplay
         )}
       >
         {content}
+        {/* Add this block to show sources, if present */}
+        {message?.sources?.length > 0 && (
+          <div className="mt-3 text-sm text-gray-500 dark:text-gray-400 border-t pt-2">
+            <strong>Sources:</strong>
+            <ul className="list-disc list-inside ml-2">
+              {message.sources.map((source, i) => (
+                <li key={i}>
+                  📄 {source.fileName} (page {source.page})
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </Container>
   );

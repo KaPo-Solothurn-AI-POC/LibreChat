@@ -66,6 +66,11 @@ function createDocumentSearch(req, userMessageContent) {
         if (!results?.length || !Array.isArray(results)) {
           return 'The semantic search did not return any results.';
       }
+      const sources = results.map((result) => ({
+        fileName: result[0]?.metadata?.filename ?? 'unknown',
+        page: result[0]?.metadata?.page ?? 'unknown',
+      }));
+
       const context = results
       .map((result) => {
         const pageContent = result[0]?.page_content?.trim() ?? '';
@@ -88,7 +93,7 @@ function createDocumentSearch(req, userMessageContent) {
 
   ${footer}`;
 
-    return prompt;
+    return {prompt, sources};
   } catch (error) {
     logger.error('Error creating context:', error);
     return '';
