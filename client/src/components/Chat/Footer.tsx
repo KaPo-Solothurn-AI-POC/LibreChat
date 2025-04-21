@@ -90,7 +90,7 @@ export default function Footer({ className }: { className?: string }) {
   // const footerElements = [...mainContentRender, privacyPolicyRender, termsOfServiceRender].filter(
   //   Boolean,
   // );
-  const footerElements = [...warningTextRender, privacyPolicyRender].filter(
+  const footerElements = [warningTextRender, privacyPolicyRender].filter(
     Boolean,
   );
 
