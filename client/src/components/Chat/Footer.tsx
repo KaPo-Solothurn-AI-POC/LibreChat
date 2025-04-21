@@ -11,6 +11,7 @@ export default function Footer({ className }: { className?: string }) {
 
   const privacyPolicy = config?.interface?.privacyPolicy;
   const termsOfService = config?.interface?.termsOfService;
+  //const warningText = config?.interface?.warningText;
 
   const privacyPolicyRender = privacyPolicy?.externalUrl != null && (
     <a
@@ -21,6 +22,12 @@ export default function Footer({ className }: { className?: string }) {
     >
       {localize('com_ui_privacy_policy')}
     </a>
+  );
+
+  const warningTextRender = (
+    <span className="text-text-secondary">
+    {localize('com_ui_warning_text')}
+  </span>
   );
 
   const termsOfServiceRender = termsOfService?.externalUrl != null && (
@@ -83,7 +90,7 @@ export default function Footer({ className }: { className?: string }) {
   // const footerElements = [...mainContentRender, privacyPolicyRender, termsOfServiceRender].filter(
   //   Boolean,
   // );
-  const footerElements = [...mainContentRender, privacyPolicyRender].filter(
+  const footerElements = [...warningTextRender, privacyPolicyRender].filter(
     Boolean,
   );
 

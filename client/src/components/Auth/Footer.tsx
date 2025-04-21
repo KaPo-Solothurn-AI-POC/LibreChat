@@ -20,6 +20,12 @@ function Footer({ startupConfig }: { startupConfig: TStartupConfig | null | unde
     </a>
   );
 
+  const warningTextRender = (
+    <span className="text-text-secondary">
+    {localize('com_ui_warning_text')}
+  </span>
+  );
+
   const termsOfServiceRender = termsOfService?.externalUrl && (
     <a
       className="text-sm text-green-500"
@@ -33,10 +39,15 @@ function Footer({ startupConfig }: { startupConfig: TStartupConfig | null | unde
 
   return (
     <div className="align-end m-4 flex justify-center gap-2" role="contentinfo">
-      {privacyPolicyRender}
-      {privacyPolicyRender && (
+      {warningTextRender}
+
+      {warningTextRender && privacyPolicyRender && (
         <div className="border-r-[1px] border-gray-300 dark:border-gray-600" />
       )}
+      {privacyPolicyRender}
+      {/* {privacyPolicyRender && (
+        <div className="border-r-[1px] border-gray-300 dark:border-gray-600" />
+      )} */}
       {/* {privacyPolicyRender && termsOfServiceRender && (
         <div className="border-r-[1px] border-gray-300 dark:border-gray-600" />
       )}
