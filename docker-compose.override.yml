@@ -39,6 +39,9 @@ services:
     - ./app/clients:/app/clients #get app clients code in for development
     - /app/node_modules  # Keep dependencies inside the container
 
+  mongodb:
+    ports:
+      - "27017:27017"
 
 
   
