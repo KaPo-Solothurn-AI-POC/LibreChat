@@ -108,6 +108,10 @@ const EditController = async (req, res, next, initializeClient) => {
       },
     });
 
+    if (client.sourceMetadata) {
+      response.sources = client.sourceMetadata;
+    }
+
     const { conversation = {} } = await client.responsePromise;
     conversation.title =
       conversation && !conversation.title ? null : conversation?.title || 'New Chat';

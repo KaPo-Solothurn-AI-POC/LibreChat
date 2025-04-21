@@ -63,17 +63,17 @@ function createDocumentSearch(req, userMessageContent) {
           return 'The semantic search did not return any results.';
       }
       const sources = results.map((result) => ({
-        fileName: result[0]?.metadata?.filename ?? 'unknown',
+        fileName: result[0]?.metadata?.file_name ?? 'unknown',
         page: result[0]?.metadata?.page ?? 'unknown',
       }));
 
       const context = results
       .map((result) => {
         const pageContent = result[0]?.page_content?.trim() ?? '';
-        const fileName = result[0]?.metadata?.filename ?? 'unknown';
+        const fileName = result[0]?.metadata?.file_name ?? 'unknown';
         return `
   <embedding>
-  <filename>${fileName}</filename>
+  <file_name>${fileName}</file_name>
   <context>
     <![CDATA[${pageContent}]]>
   </context>

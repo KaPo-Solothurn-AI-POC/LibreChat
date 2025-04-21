@@ -105,6 +105,7 @@ const DisplayMessage = ({ text, isCreatedByUser, message, showCursor }: TDisplay
       >
         {content}
         {/* Add this block to show sources, if present */}
+        {console.log(message)}
         {message?.sources?.length > 0 && (
           <div className="mt-3 text-sm text-gray-500 dark:text-gray-400 border-t pt-2">
             <strong>Sources:</strong>
