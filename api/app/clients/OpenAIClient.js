@@ -487,12 +487,6 @@ class OpenAIClient extends BaseClient {
       promptPrefix = this.augmentedPrompt + promptPrefix;
       logger.debug('[contextHandler] augmented Prefix made')
     }
-    // } else {
-    //   this.augmentedPrompt = await this.documentSearch.createDocContext();
-    //   promptPrefix = this.augmentedPrompt + promptPrefix
-    //   logger.debug('[OpenAIClient] Prompt augmented with Document search')
-    //   logger.info(promptPrefix)
-    // }
     
     if (this.documentSearch) {
       logger.debug("[documentSearch] triggered", this.documentSearch);

@@ -106,16 +106,3 @@ endpoints:
     # The label displayed for the AI model in messages.
     modelDisplayLabel: 'llama-3.1-70b' # Default is "AI" when not set.
 
-
-  # - name: 'Swisscom AI Platform'
-  #   apiKey: '${SWISSCOM_AI_KEY}'
-  #   baseURL: 'https://ep1.ai-platform.swisscom.com/v1'
-  #   models:
-  #     default:
-  #       [
-  #         "meta/llama-3.1-70b-instruct"
-  #       ]
-  #     fetch: false
-  #   titleConvo: true
-  #   titleModel: 'llama-3.1-70b-instruct'
-  #   modelDisplayLabel: 'llama-3.1-70b'

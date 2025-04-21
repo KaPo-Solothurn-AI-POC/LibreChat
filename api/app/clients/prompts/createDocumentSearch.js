@@ -40,7 +40,7 @@ function createDocumentSearch(req, userMessageContent) {
     );
   };
 
-  // We no longer need to process files, so this is simplified, but does it still need it???
+  // We no longer need to process files, so this is simplified
   const processEmbedding = async (embedding) => {
     if (embedding.embedded && !processedIds.has(embedding.file_id)) {
       try {
@@ -55,10 +55,6 @@ function createDocumentSearch(req, userMessageContent) {
   };
 
   const createDocContext = async () => {
-    // try {
-    //   if (!queryPromises.length || !processedEmbeddings.length) {
-    //     return '';
-    //   }
     try {
         const response = await query(); //query rag api
         const results = response.data;
@@ -99,90 +95,6 @@ function createDocumentSearch(req, userMessageContent) {
     return '';
   }
 };
-
-  //     const oneEmbedding = processedEmbeddings.length === 1;
-  //     const header = `The user has provided ${oneEmbedding ? 'one' : processedEmbeddings.length} embedding${
-  //       !oneEmbedding ? 's' : ''
-  //     } for the conversation:`;
-
-  //     // Constructing the context based on embeddings and filenames
-  //     const embeddings = `${
-  //       oneEmbedding
-  //         ? ''
-  //         : `\n<embeddings>`
-  //     }${processedEmbeddings
-  //       .map(
-  //         (embedding) => `
-  //           <embedding>
-  //             <filename>${embedding.filename}</filename>
-  //             <type>${embedding.type}</type> 
-  //           </embedding>`
-  //       )
-  //       .join('')}${
-  //       oneEmbedding
-  //         ? ''
-  //         : `\n</embeddings>`
-  //     }`;
-
-  //     // Resolve all queries (this now gets embeddings)
-  //     const resolvedQueries = await Promise.all(queryPromises);
-
-  //     const context =
-  //       resolvedQueries.length === 0
-  //         ? '\n\tThe semantic search did not return any results.'
-  //         : resolvedQueries
-  //           .map((queryResult, index) => {
-  //             const embedding = processedEmbeddings[index];
-  //             let contextItems = queryResult.data;
-
-  //             const generateContext = (currentContext) =>
-  //               `
-  //           <embedding>
-  //             <filename>${embedding.filename}</filename>
-  //             <context>${currentContext}</context>
-  //           </embedding>`;
-
-  //             // if (useFullContext) {
-  //             //   return generateContext(`\n${contextItems}`);
-  //             // }
-
-  //             contextItems = queryResult.data
-  //               .map((item) => {
-  //                 const pageContent = item[0].page_content;
-  //                 return `
-  //             <contextItem>
-  //               <![CDATA[${pageContent?.trim()}]]>
-  //             </contextItem>`;
-  //               })
-  //               .join('');
-
-  //             return generateContext(contextItems);
-  //           })
-  //           .join('');
-
-  //     // if (useFullContext) {
-  //     //   const prompt = `${header}
-  //     //     ${context}
-  //     //     ${footer}`;
-
-  //     //   return prompt;
-  //     // }
-
-  //     const prompt = `${header}
-  //       ${embeddings}
-
-  //       A semantic search was executed with the user's message as the query, retrieving the following context inside <context></context> XML tags.
-
-  //       <context>${context}</context>
-
-  //       ${footer}`;
-
-  //     return prompt;
-  //   } catch (error) {
-  //     logger.error('Error creating context:', error);
-  //     throw error;
-  //   }
-  // };
 
   return {
     processEmbedding,
