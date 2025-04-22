@@ -29,6 +29,8 @@ services:
     build:
       context: .
       target: node
+    environment:
+    - DATABASE_URL=${DATABASE_URL}
     env_file:
     - .env
     volumes:
@@ -43,19 +45,6 @@ services:
     ports:
       - "27017:27017"
 
-
-  
-  vectordb:
-    image: ankane/pgvector:latest
-    environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-    volumes:
-      - pgdata2:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-
   rag_api:
     image: librechat-rag-api:local
     build:
@@ -65,6 +54,7 @@ services:
     environment:
       - RAG_API_URL=http://rag_api:${RAG_PORT:-8000}
       - RAG_UPLOAD_DIR=/app/uploads
+      - DATABASE_URL=${DATABASE_URL}
     volumes:
       - ../rag_api/uploads:/app/uploads
       - ../rag_api:/app
