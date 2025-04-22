@@ -55,6 +55,11 @@ services:
       - RAG_API_URL=http://rag_api:${RAG_PORT:-8000}
       - RAG_UPLOAD_DIR=/app/uploads
       - DATABASE_URL=${DATABASE_URL}
+      - POSTGRES_DB=kapo_embeddings
+      - POSTGRES_USER=fred
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
     volumes:
       - ../rag_api/uploads:/app/uploads
       - ../rag_api:/app
