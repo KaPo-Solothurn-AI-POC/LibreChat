@@ -8,7 +8,7 @@ export default function CustomMinimalIcon({
 }) {
   return (
     <img
-      src="/assets/llama_icon_kapo.PNG"
+      src= "/assets/kaposo.svg" //"/assets/llama_icon_kapo.PNG"
       width={size}
       height={size}
       className={cn(className)}

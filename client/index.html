@@ -20,17 +20,18 @@
       }
     </style>
     <script>
-      const theme = localStorage.getItem('color-theme');
+      const useStoredTheme = false;
+      const theme = useStoredTheme ? localStorage.getItem('color-theme') : 'dark';
       const loadingContainerStyle = document.createElement('style');
       let backgroundColor;
 
       if (theme === 'dark') {
-        backgroundColor = '#0d0d0d';
+        backgroundColor = '#131f42';
       } else if (theme === 'light') {
         backgroundColor = '#ffffff';
       } else if (theme === 'system') {
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        backgroundColor = prefersDarkScheme ? '#0d0d0d' : '#ffffff';
+        backgroundColor = prefersDarkScheme ? '#131f42' : '#ffffff';
       } else {
         backgroundColor = '#ffffff';
       }
