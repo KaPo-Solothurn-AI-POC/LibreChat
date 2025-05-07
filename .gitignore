@@ -107,6 +107,6 @@ uploads/
 # owner
 release/
 
-LibreChat/
-src/
-app/
+/LibreChat/
+/src/
+/app/
