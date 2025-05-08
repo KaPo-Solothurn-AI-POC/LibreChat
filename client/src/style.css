@@ -1953,7 +1953,7 @@ button.scroll-convo {
 .dark .webkit-dark-styles:focus {
   -webkit-text-fill-color: #fff;
   background-clip: content-box;
-  -webkit-box-shadow: 0 0 0 50vh #0d0d0d inset; /*#0d0d0d --police-blue*/
+  -webkit-box-shadow: 0 0 0 50vh #131f42 inset; /*#0d0d0d --police-blue*/
 }
 
 /* Ordered Listing */
